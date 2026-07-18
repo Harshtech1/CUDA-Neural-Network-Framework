@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18)
 
 project(
     CUDA_Neural_Network_Framework
-    VERSION 0.3.0
+    VERSION 0.6.0
     LANGUAGES CXX CUDA
 )
 
@@ -19,10 +19,25 @@ add_executable(
     src/main.cpp
     src/framework.cpp
     src/tensor.cpp
+    src/linear.cpp
+    src/parameter.cpp
+    src/relu.cpp
+    src/sequential.cpp
+    src/mse_loss.cpp
+    src/sgd.cpp
+
+    cuda/tensor_add.cu
+    cuda/gemm.cu
 )
 
-target_link_libraries(framework PRIVATE CUDA::cudart)
+target_link_libraries(
+    framework
+    PRIVATE
+    CUDA::cudart
+)
 
-set_target_properties(framework PROPERTIES
+set_target_properties(
+    framework
+    PROPERTIES
     CUDA_SEPARABLE_COMPILATION ON
 )
