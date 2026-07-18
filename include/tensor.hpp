@@ -1,25 +1,19 @@
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
 class Tensor
 {
 private:
 
-    // Host (CPU) memory
     float* cpu_data_;
-
-    // Device (GPU) memory
     float* gpu_data_;
 
-    // Tensor shape
     std::vector<int> shape_;
 
-    // Number of elements
     size_t size_;
 
-    // Current device
     std::string device_;
 
 public:
@@ -36,7 +30,6 @@ public:
 
     size_t size() const;
 
-    // CUDA Memory Functions
     void allocateGPU();
 
     void toGPU();
@@ -44,4 +37,13 @@ public:
     void toCPU();
 
     void freeGPU();
+
+    // Tensor Operations
+    Tensor add(const Tensor& other) const;
+
+    Tensor multiply(const Tensor& other) const;
+
+    static Tensor zeros(const std::vector<int>& shape);
+
+    static Tensor ones(const std::vector<int>& shape);
 };

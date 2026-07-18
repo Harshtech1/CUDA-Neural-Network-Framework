@@ -1,8 +1,8 @@
 #include "../include/tensor.hpp"
 
-#include <iostream>
-
 #include <cuda_runtime.h>
+
+#include <iostream>
 
 Tensor::Tensor(const std::vector<int>& shape)
 {
@@ -35,6 +35,60 @@ Tensor::~Tensor()
     }
 
     std::cout << "Tensor memory released." << std::endl;
+}
+
+void Tensor::fill(float value)
+{
+    for (size_t i = 0; i < size_; i++)
+    {
+        cpu_data_[i] = value;
+    }
+}
+
+Tensor Tensor::zeros(const std::vector<int>& shape)
+{
+    Tensor t(shape);
+
+    t.fill(0.0f);
+
+    return t;
+}
+
+Tensor Tensor::ones(const std::vector<int>& shape)
+{
+    Tensor t(shape);
+
+    t.fill(1.0f);
+
+    return t;
+}
+
+Tensor Tensor::add(const Tensor& other) const
+{
+    Tensor result(shape_);
+
+    for(size_t i = 0; i < size_; i++)
+    {
+        result.cpu_data_[i] =
+            cpu_data_[i] +
+            other.cpu_data_[i];
+    }
+
+    return result;
+}
+
+Tensor Tensor::multiply(const Tensor& other) const
+{
+    Tensor result(shape_);
+
+    for(size_t i = 0; i < size_; i++)
+    {
+        result.cpu_data_[i] =
+            cpu_data_[i] *
+            other.cpu_data_[i];
+    }
+
+    return result;
 }
 
 void Tensor::allocateGPU()
@@ -74,7 +128,7 @@ void Tensor::toCPU()
 
 void Tensor::freeGPU()
 {
-    if (gpu_data_)
+    if(gpu_data_)
     {
         cudaFree(gpu_data_);
 
@@ -84,19 +138,11 @@ void Tensor::freeGPU()
     }
 }
 
-void Tensor::fill(float value)
-{
-    for (size_t i = 0; i < size_; i++)
-    {
-        cpu_data_[i] = value;
-    }
-}
-
 void Tensor::print() const
 {
-    std::cout << "Tensor Data:" << std::endl;
+    std::cout << "Tensor Data:\n";
 
-    for (size_t i = 0; i < size_; i++)
+    for(size_t i = 0; i < size_; i++)
     {
         std::cout << cpu_data_[i] << " ";
     }
@@ -108,21 +154,25 @@ void Tensor::info() const
 {
     std::cout << "\n========== Tensor Info ==========\n";
 
-    std::cout << "Device : " << device_ << std::endl;
+    std::cout << "Device : "
+              << device_
+              << std::endl;
 
     std::cout << "Shape  : ";
 
-    for (size_t i = 0; i < shape_.size(); i++)
+    for(size_t i=0;i<shape_.size();i++)
     {
         std::cout << shape_[i];
 
-        if (i != shape_.size() - 1)
+        if(i != shape_.size()-1)
             std::cout << " x ";
     }
 
     std::cout << std::endl;
 
-    std::cout << "Size   : " << size_ << std::endl;
+    std::cout << "Size   : "
+              << size_
+              << std::endl;
 
     std::cout << "=================================\n";
 }

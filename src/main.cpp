@@ -1,38 +1,56 @@
-#include <iostream>
-
 #include "../include/framework.hpp"
 #include "../include/tensor.hpp"
 #include "../include/version.hpp"
 
+#include <iostream>
+
 int main()
 {
-    std::cout << "=========================================\n";
-    std::cout << FRAMEWORK_NAME << "\n";
-    std::cout << "Version "
-              << FRAMEWORK_VERSION_MAJOR << "."
-              << FRAMEWORK_VERSION_MINOR << "."
-              << FRAMEWORK_VERSION_PATCH << "\n";
-    std::cout << "=========================================\n\n";
+    std::cout << FRAMEWORK_NAME << std::endl;
 
     Framework framework;
 
     framework.initialize();
 
-    Tensor tensor({2,3});
+    std::cout << "\nCreating Tensor A\n";
 
-    tensor.fill(7.0f);
+    Tensor A({2,3});
 
-    tensor.info();
+    A.fill(2);
 
-    tensor.print();
+    A.print();
 
-    tensor.allocateGPU();
+    std::cout << "\nCreating Tensor B\n";
 
-    tensor.toGPU();
+    Tensor B({2,3});
 
-    tensor.toCPU();
+    B.fill(5);
 
-    tensor.freeGPU();
+    B.print();
+
+    std::cout << "\nA + B\n";
+
+    Tensor C = A.add(B);
+
+    C.print();
+
+    std::cout << "\nA * B\n";
+
+    Tensor D = A.multiply(B);
+
+    D.print();
+
+    std::cout << "\nZeros Tensor\n";
+
+    Tensor Z = Tensor::zeros({2,3});
+
+    Z.print();
+
+    std::cout << "\nOnes Tensor\n";
+
+    Tensor O = Tensor::ones({2,3});
+
+    O.print();
 
     return 0;
 }
