@@ -1,0 +1,33 @@
+# Build
+build/
+bin/
+
+# Object Files
+*.o
+*.obj
+
+# Executables
+*.out
+*.exe
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake-build-*/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+
+# Vim
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
