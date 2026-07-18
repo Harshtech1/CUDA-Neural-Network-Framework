@@ -2,35 +2,93 @@
 
 #include <iostream>
 
+#include <cuda_runtime.h>
+
 Tensor::Tensor(const std::vector<int>& shape)
 {
     shape_ = shape;
-    device_ = "CPU";
 
     size_ = 1;
+
     for (int dim : shape_)
     {
         size_ *= dim;
     }
 
-    data_ = new float[size_];
+    cpu_data_ = new float[size_];
 
-    std::cout << "Tensor allocated on CPU (" << size_
+    gpu_data_ = nullptr;
+
+    device_ = "CPU";
+
+    std::cout << "CPU memory allocated (" << size_
               << " elements)" << std::endl;
 }
 
 Tensor::~Tensor()
 {
-    delete[] data_;
+    delete[] cpu_data_;
+
+    if (gpu_data_ != nullptr)
+    {
+        cudaFree(gpu_data_);
+    }
 
     std::cout << "Tensor memory released." << std::endl;
+}
+
+void Tensor::allocateGPU()
+{
+    cudaMalloc(&gpu_data_, size_ * sizeof(float));
+
+    std::cout << "GPU memory allocated." << std::endl;
+}
+
+void Tensor::toGPU()
+{
+    cudaMemcpy(
+        gpu_data_,
+        cpu_data_,
+        size_ * sizeof(float),
+        cudaMemcpyHostToDevice
+    );
+
+    device_ = "GPU";
+
+    std::cout << "Copied CPU -> GPU" << std::endl;
+}
+
+void Tensor::toCPU()
+{
+    cudaMemcpy(
+        cpu_data_,
+        gpu_data_,
+        size_ * sizeof(float),
+        cudaMemcpyDeviceToHost
+    );
+
+    device_ = "CPU";
+
+    std::cout << "Copied GPU -> CPU" << std::endl;
+}
+
+void Tensor::freeGPU()
+{
+    if (gpu_data_)
+    {
+        cudaFree(gpu_data_);
+
+        gpu_data_ = nullptr;
+
+        std::cout << "GPU memory released." << std::endl;
+    }
 }
 
 void Tensor::fill(float value)
 {
     for (size_t i = 0; i < size_; i++)
     {
-        data_[i] = value;
+        cpu_data_[i] = value;
     }
 }
 
@@ -40,7 +98,7 @@ void Tensor::print() const
 
     for (size_t i = 0; i < size_; i++)
     {
-        std::cout << data_[i] << " ";
+        std::cout << cpu_data_[i] << " ";
     }
 
     std::cout << std::endl;

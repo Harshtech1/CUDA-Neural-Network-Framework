@@ -15,17 +15,24 @@ int main()
     std::cout << "=========================================\n\n";
 
     Framework framework;
+
     framework.initialize();
 
-    std::cout << "\nCreating Tensor...\n" << std::endl;
+    Tensor tensor({2,3});
 
-    Tensor tensor({2, 3});
+    tensor.fill(7.0f);
 
     tensor.info();
 
-    tensor.fill(5.0f);
-
     tensor.print();
+
+    tensor.allocateGPU();
+
+    tensor.toGPU();
+
+    tensor.toCPU();
+
+    tensor.freeGPU();
 
     return 0;
 }
